@@ -1,0 +1,26 @@
+{
+  "name": "service-a",
+  "version": "1.0.0",
+  "description": "```sh\r # First, build the custom Node.js 22 Docker image\r docker build -t custom-node:22 ./docker/node-base # custom-node:22",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LalbaAnthony/ynov-docker-rendu-final.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/LalbaAnthony/ynov-docker-rendu-final/issues"
+  },
+  "homepage": "https://github.com/LalbaAnthony/ynov-docker-rendu-final#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  }
+}
