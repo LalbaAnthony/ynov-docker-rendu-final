@@ -11,7 +11,11 @@ cp .env.example .env
 docker build -t custom-node:22 ./docker/node-base # output: a usable Node.js 22 named custom-node:22
 
 # Then, start all services with Docker Compose
-docker compose build --no-cache
+docker compose build --no-cache ; docker compose up
+
+# Rebuild one service if needed
+docker compose down
+docker compose build --no-cache service-a
 docker compose up
 ```
 
@@ -19,8 +23,8 @@ docker compose up
 
 ### Ports binding
 
-| Service         | Port | Description      | URL                   |
-| --------------- | ---- | ---------------- | --------------------- |
-| Service A       | 3001 | Express backend  | http://localhost:3001 |
-| Service B       | 3002 | Express backend  | http://localhost:3002 |
-| Service C       | 5173 | Vue.js frontend  | http://localhost:5173 |
+| Name            | Type  | Port | Description      | Internal URL          | URL                          |
+| --------------- | ----- | ---- | ---------------- | --------------------- | ---------------------------- | 
+| Service A       | back  | 3001 | Express backend  | http://localhost:3001 | http://localhost:8080/api/a/ |
+| Service B       | back  | 3002 | Express backend  | http://localhost:3002 | http://localhost:8080/api/b/ |
+| Service C       | front | 5173 | Vue.js frontend  | http://localhost:5173 | //                           |

@@ -16,6 +16,14 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use(({ res }) => {
+    return res.status(404).json({
+        service: "service-a",
+        message: "Nothing found here",
+        status: "ko"        
+    })
+})
+
 app.listen(PORT, () => {
     console.log(`Service B running on port ${PORT}`);
 });

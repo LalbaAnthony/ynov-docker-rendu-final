@@ -6,8 +6,8 @@ const serviceB = ref(null);
 
 const fetchData = async () => {
   const [a, b] = await Promise.all([
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/a`).then(r => r.json()),
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/b`).then(r => r.json())
+    fetch(`${import.meta.env.VITE_SERVICE_A_URL}`).then(r => r.json()),
+    fetch(`${import.meta.env.VITE_SERVICE_B_URL}`).then(r => r.json())
   ]);
 
   serviceA.value = a;

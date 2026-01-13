@@ -1,15 +1,6 @@
 version: "3.9"
 
 services:
-  gateway:
-    build: ./services/gateway
-    ports:
-      - "8080:80"
-    depends_on:
-      - service-a
-      - service-b
-      - service-c
-
   service-a:
     build: ./services/service-a
     env_file:
