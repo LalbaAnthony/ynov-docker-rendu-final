@@ -1,10 +1,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.json({
@@ -14,5 +17,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Service A running on port ${PORT}`);
+    console.log(`Service B running on port ${PORT}`);
 });

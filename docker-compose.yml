@@ -1,9 +1,17 @@
 version: "3.9"
 
 services:
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "8080:80"
+    depends_on:
+      - service-a
+      - service-b
+      - service-c
+
   service-a:
     build: ./services/service-a
-    container_name: service-a
     env_file:
       - ./services/service-a/.env
     ports:
@@ -12,9 +20,19 @@ services:
 
   service-b:
     build: ./services/service-b
-    container_name: service-b
     env_file:
       - ./services/service-b/.env
     ports:
       - "3002:3002"
+    restart: unless-stopped
+
+  service-c:
+    build: ./services/service-c
+    env_file:
+      - ./services/service-c/.env
+    ports:
+      - "5173:5173"
+    depends_on:
+      - service-a
+      - service-b
     restart: unless-stopped
