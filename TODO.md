@@ -1,0 +1,16 @@
+- [ ] Faire marcher proxy appels front
+- [ ] For each service, add healthcheck on root endpoint + auto restart
+- [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
+- [ ] Image docker expliqué: bonus FROM image
+- [ ] Tools (hypervision, supervision): grafana, ...
+- [ ] Architecture de micro services avec différents images (compose)
+- [x] Images basés sur d'autres images (image custom)
+- [x] Limitation RAM/PROCCO
+- [ ] Ports correctement mappés
+- [x] Dépdeandances: tant que BDD pas demarrée, les autres services n'ont pas à démarrer
+- [ ] Que se passe til si un conteneur plante ? Politique de relance
+- [ ] S'assurer que le cycle de vie des conteneurs est bien géré (restart, stop, start, ...)
+- [ ] Metter commentaire partout
+- [ ] Expliquer pk vous avez fait tel choix (RAM, PROCCO, ports, volumes, ...)
+- [ ] Minimum 3 images docker (backend, bdd, frontend)
+- [ ] Checkup avec consignes
