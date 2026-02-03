@@ -1,4 +1,3 @@
-- [ ] Faire marcher proxy appels front
 - [ ] For each service, add healthcheck on root endpoint + auto restart
 - [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
 - [ ] Image docker expliqué: bonus FROM image
@@ -14,11 +13,11 @@
 - [ ] Expliquer pk vous avez fait tel choix (RAM, PROCCO, ports, volumes, ...)
 - [ ] Minimum 3 images docker (backend, bdd, frontend)
 - [ ] 0 images depuis docker hub. Toutes vos images doivent avoir de la personnalisation.
-- [ ] Vous devez produire au moins 3 types d’images, 1 pour du front, 1 pour du back et 1 “serveur web” (dans mon exemple ça sera un serveur de jeux).
+- [ ] Vous devez produire au moins 3 types d'images, 1 pour du front, 1 pour du back et 1 "serveur web" (dans mon exemple ça sera un serveur de jeux).
 - [ ] Au run (et dans le compose), tous vos containers doivent recevoir des arguments afin de  customiser les ressources allouées. 
 - [ ] Faire schema architecture
 - [ ] une documentation pour expliquer vos choix
     - [ ] Expliquer les choix - au build - sur vos images (quelles dépendances, quels ports ouverts...) 
     - [ ] Expliquer les argument nécessaires au run (ils se retrouveront dans votre docker compose) 
-    - [ ] Toute installation de librairie, opération sur l’OS doit être expliquée
+    - [ ] Toute installation de librairie, opération sur l'OS doit être expliquée
 - [ ] Checkup avec parties "critères" de la consigne
