@@ -82,13 +82,17 @@ It also sets up a non-root `nodeuser` user to enhance security.
 
 ### RAM and CPUs limitations
 
-Limits: 
-- Backend services are caped to `512Mo` of RAM and `0.2 CPU`.
-- Frontend service is caped to `256Mo` of RAM and `0.1 CPU`. Since VueJS works in SPA, most of the load is on the client side.
-- Monitoring service (Netdata) is caped to `256Mo` of RAM and `0.1 CPU` since it is lightweight.
+| Service   | RAM (Limite) | CPU (Limite) | RAM (Réservation) | CPU (Réservation) | Reasoning                                                                                                  |
+| --------- | ------------ | ------------ | ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| service-a | 128Mo        | 0.2          | 64Mo              | 0.2               | Node.js backend services are generally lightweight and do not require a lot of resources (30-50 Mo empty). |
+| service-b | 128Mo        | 0.2          | 64Mo              | 0.2               | Node.js backend services are generally lightweight and do not require a lot of resources (30-50 Mo empty). |
+| service-c | 32Mo         | 0.1          | 32Mo              | 0.1               | Vue.js frontend service is mostly static files, so it has a very low resource usage.                       |
+| service-d | 256Mo        | 0.3          | 128Mo             | 0.2               | Netdata is lightweight but can use more resources when monitoring multiple containers.                     |
 
-Reservations:
-They are all set to half of the limits to ensure that the services have enough resources to run properly.
+Limits are set based on typical usage patterns for Node.js applications and the specific needs of each service.
+In practice, Node.js applications often use around `30-50 Mo` of RAM when idle, so the limits are set to provide enough headroom for normal operation while preventing excessive resource consumption.
+
+Reservations are typicaly set to half of the limits to ensure that the services have enough resources to run properly.
 
 ### Healthchecks, restarts and lifecycle management
 
@@ -103,11 +107,34 @@ HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
 ```
 
 But the port was hardcoded since `PORT` is not available at build time, making it unusable for other services, and kinda ugly.
-I upgraded it to use a Node.js one-liner that reads the `PORT` environment variable:
+I upgraded it to use a Node.js one-liner l reads the `PORT` environment variable:
 ```dockerfile
 HEALTHCHECK --interval=10s --timeout=3s --retries=3 --start-period=15s \
     CMD node -e "require('http').get({host:'127.0.0.1', port: process.env.PORT, path:'/health', timeout:2000}, r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 ```
+
+#### SIGNAL forwarding
+
+Both backend have a proper `SIGTERM` and `SIGINT` handling to gracefully shutdown when Docker sends the signal during a `docker stop` or `docker compose down` as
+
+```javascript
+// Graceful shutdown
+const shutdown = async (signal) => {
+    console.log(`Received ${signal}, shutting down...`)
+
+    server.close(() => {
+        console.log('Server closed')
+        process.exit(0)
+    })
+
+    setTimeout(() => process.exit(1), 10000)
+}
+
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
+```
+
+This ensures that the application can clean up resources and finish ongoing requests before exiting.
 
 #### Restart policies for backend services
 

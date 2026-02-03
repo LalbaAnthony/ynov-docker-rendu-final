@@ -11,10 +11,10 @@ services:
       resources:
         limits:
           cpus: "0.2"
-          memory: 512M
+          memory: 128M
         reservations:
-          cpus: "0.1"
-          memory: 256M
+          cpus: "0.2"
+          memory: 64M
 
   service-b:
     container_name: service-b
@@ -28,10 +28,10 @@ services:
       resources:
         limits:
           cpus: "0.2"
-          memory: 512M
+          memory: 128M
         reservations:
-          cpus: "0.1"
-          memory: 256M
+          cpus: "0.2"
+          memory: 64M
 
   service-c:
     container_name: service-c
@@ -50,10 +50,10 @@ services:
       resources:
         limits:
           cpus: "0.1"
-          memory: 256M
+          memory: 32M
         reservations:
-          cpus: "0.05"
-          memory: 128M
+          cpus: "0.1"
+          memory: 32M
 
   service-d:
     container_name: service-d
@@ -74,8 +74,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.1"
+          cpus: "0.3"
           memory: 256M
         reservations:
-          cpus: "0.05"
+          cpus: "0.2"
           memory: 128M
