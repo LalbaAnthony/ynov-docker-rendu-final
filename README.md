@@ -13,6 +13,9 @@ docker build -t custom-node:22 ./docker/node-base # output: a usable Node.js 22 
 # Then, start all services with Docker Compose
 docker compose build --no-cache ; docker compose up
 
+# Restart all services without rebuilding images
+docker compose down ; docker compose up
+
 # Rebuild one service if needed
 docker compose down
 docker compose build --no-cache service-a
@@ -23,11 +26,11 @@ docker compose up
 
 ### Ports binding
 
-| Name            | Type        | Port   | Techno     | Internal URL          | URL                          |
-| --------------- | ----------- | ------ | ---------- | --------------------- | ---------------------------- | 
-| Service A       | Backend     | 3001   | Express    | http://localhost:3001 | http://localhost:8080/api/a/ |
-| Service B       | Backend     | 3002   | Express    | http://localhost:3002 | http://localhost:8080/api/b/ |
-| Service C       | Frontend    | 5173   | Vue.js     | http://localhost:5173 | //                           |
+| Name            | Type        | Port externe  | Port interne  | Techno     | Internal URL          | URL                          |
+| --------------- | ----------- | ------------- | ------------- | ---------- | --------------------- | ---------------------------- | 
+| Service A       | Backend     | 3001          | 3001          | Express    | http://localhost:3001 | http://localhost:8080/api/a/ |
+| Service B       | Backend     | 3002          | 3002          | Express    | http://localhost:3002 | http://localhost:8080/api/b/ |
+| Service C       | Frontend    | 80          | 5173          | Vue.js     | http://localhost:5173 | //                           |
 
 ### RAM and CPUs limitations
 

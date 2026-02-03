@@ -30,7 +30,7 @@ services:
     env_file:
       - ./services/service-c/.env
     ports:
-      - "5173:5173"
+      - "80:5173"
     depends_on:
       service-a:
         condition: service_healthy

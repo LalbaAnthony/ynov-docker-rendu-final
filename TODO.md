@@ -6,7 +6,7 @@
 - [ ] Architecture de micro services avec différents images (compose)
 - [x] Images basés sur d'autres images (image custom)
 - [x] Limitation RAM/PROCCO
-- [ ] Ports correctement mappés
+- [x] Ports correctement mappés
 - [x] Dépdeandances: tant que BDD pas demarrée, les autres services n'ont pas à démarrer
 - [ ] Que se passe til si un conteneur plante ? Politique de relance
 - [ ] S'assurer que le cycle de vie des conteneurs est bien géré (restart, stop, start, ...)
