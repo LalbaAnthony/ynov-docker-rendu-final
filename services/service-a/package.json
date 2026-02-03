@@ -1,7 +1,7 @@
 {
   "name": "service-a",
   "version": "1.0.0",
-  "description": "```sh\r # First, build the custom Node.js 22 Docker image\r docker build -t custom-node:22 ./docker/node-base # custom-node:22",
+  "description": "```sh\r # First, build the custom Node.js 22 Docker image\r docker build -t custom-node:22 ./ressources/node-base # custom-node:22",
   "main": "index.js",
   "scripts": {
     "dev": "node src/index.js",

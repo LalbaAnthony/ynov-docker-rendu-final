@@ -2,15 +2,23 @@
 - [ ] For each service, add healthcheck on root endpoint + auto restart
 - [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
 - [ ] Image docker expliqué: bonus FROM image
-- [ ] Tools (hypervision, supervision): grafana, ...
-- [ ] Architecture de micro services avec différents images (compose)
+- [x] Tools (hypervision, supervision): grafana, ...
+- [x] Architecture de micro services avec différents images (compose)
 - [x] Images basés sur d'autres images (image custom)
 - [x] Limitation RAM/PROCCO
 - [x] Ports correctement mappés
 - [x] Dépdeandances: tant que BDD pas demarrée, les autres services n'ont pas à démarrer
 - [ ] Que se passe til si un conteneur plante ? Politique de relance
 - [ ] S'assurer que le cycle de vie des conteneurs est bien géré (restart, stop, start, ...)
-- [ ] Metter commentaire partout
+- [ ] Mettre commentaire partout
 - [ ] Expliquer pk vous avez fait tel choix (RAM, PROCCO, ports, volumes, ...)
 - [ ] Minimum 3 images docker (backend, bdd, frontend)
-- [ ] Checkup avec consignes
+- [ ] 0 images depuis docker hub. Toutes vos images doivent avoir de la personnalisation.
+- [ ] Vous devez produire au moins 3 types d’images, 1 pour du front, 1 pour du back et 1 “serveur web” (dans mon exemple ça sera un serveur de jeux).
+- [ ] Au run (et dans le compose), tous vos containers doivent recevoir des arguments afin de  customiser les ressources allouées. 
+- [ ] Faire schema architecture
+- [ ] une documentation pour expliquer vos choix
+    - [ ] Expliquer les choix - au build - sur vos images (quelles dépendances, quels ports ouverts...) 
+    - [ ] Expliquer les argument nécessaires au run (ils se retrouveront dans votre docker compose) 
+    - [ ] Toute installation de librairie, opération sur l’OS doit être expliquée
+- [ ] Checkup avec parties "critères" de la consigne

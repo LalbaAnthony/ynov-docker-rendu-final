@@ -1,5 +1,6 @@
 services:
   service-a:
+    container_name: service-a
     build: ./services/service-a
     env_file:
       - ./services/service-a/.env
@@ -9,10 +10,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
 
   service-b:
+    container_name: service-b
     build: ./services/service-b
     env_file:
       - ./services/service-b/.env
@@ -22,10 +24,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
 
   service-c:
+    container_name: service-c
     build: ./services/service-c
     env_file:
       - ./services/service-c/.env
@@ -40,6 +43,22 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
 
+  service-d:
+    container_name: service-d
+    build: ./services/service-d
+    ports:
+      - "19999:19999"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    restart: unless-stopped
