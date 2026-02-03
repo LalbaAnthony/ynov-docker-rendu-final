@@ -1,4 +1,5 @@
 - [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
+- [ ] Ajouter nginx ou trefik en reverse proxy ?
 - [x] Image docker expliqué: bonus FROM image
 - [x] Tools (hypervision, supervision): grafana, ...
 - [x] Architecture de micro services avec différents images (compose)
