@@ -1,19 +1,19 @@
-- [ ] For each service, add healthcheck on root endpoint + auto restart
-- [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
-- [ ] Image docker expliqué: bonus FROM image
+- [x] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
+- [x] Image docker expliqué: bonus FROM image
 - [x] Tools (hypervision, supervision): grafana, ...
 - [x] Architecture de micro services avec différents images (compose)
 - [x] Images basés sur d'autres images (image custom)
 - [x] Limitation RAM/PROCCO
 - [x] Ports correctement mappés
 - [x] Dépdeandances: tant que BDD pas demarrée, les autres services n'ont pas à démarrer
-- [ ] Que se passe til si un conteneur plante ? Politique de relance
-- [ ] S'assurer que le cycle de vie des conteneurs est bien géré (restart, stop, start, ...)
+- [x] Que se passe til si un conteneur plante ? Politique de relance
+- [x] S'assurer que le cycle de vie des conteneurs est bien géré (restart, stop, start, ...)
+- [x] For each service, add healthcheck on root endpoint + auto restart
 - [ ] Mettre commentaire partout
-- [ ] Expliquer pk vous avez fait tel choix (RAM, PROCCO, ports, volumes, ...)
-- [ ] Minimum 3 images docker (backend, bdd, frontend)
-- [ ] 0 images depuis docker hub. Toutes vos images doivent avoir de la personnalisation.
-- [ ] Vous devez produire au moins 3 types d'images, 1 pour du front, 1 pour du back et 1 "serveur web" (dans mon exemple ça sera un serveur de jeux).
+- [x] Expliquer pk vous avez fait tel choix (RAM, PROCCO, ports, volumes, ...)
+- [x] Minimum 3 images docker (backend, bdd, frontend)
+- [x] 0 images depuis docker hub. Toutes vos images doivent avoir de la personnalisation.
+- [x] Vous devez produire au moins 3 types d'images, 1 pour du front, 1 pour du back et 1 "serveur web" (dans mon exemple ça sera un serveur de jeux).
 - [ ] Au run (et dans le compose), tous vos containers doivent recevoir des arguments afin de  customiser les ressources allouées. 
 - [ ] Faire schema architecture
 - [ ] une documentation pour expliquer vos choix

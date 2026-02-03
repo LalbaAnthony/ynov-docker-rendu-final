@@ -7,8 +7,8 @@ RUN npm ci --omit=dev
 
 COPY src ./src
 
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
-    CMD curl -f http://localhost:3002/health || exit 1
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 --start-period=15s \
+    CMD node -e "require('http').get({host:'127.0.0.1', port: process.env.PORT, path:'/health', timeout:2000}, r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
 EXPOSE ${PORT}
 

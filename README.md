@@ -3,7 +3,7 @@
 All `.env.example` files contain real working example values, so you can use them as-is for local development. In a production environment, we would recommend changing sensitive values such as API keys, passwords, and secrets.
 
 ```sh
-# FOR EACH SERVICE `service-*` LIKE SERVICE: Copy the example environment file
+# ! FOR EACH SERVICE LIKE `service-*`: Copy the example environment file
 cd services/<SERVICE_NAME>
 cp .env.example .env
 
@@ -20,6 +20,13 @@ docker compose down ; docker compose up
 docker compose down
 docker compose build --no-cache service-a
 docker compose up
+```
+
+## 📋 Others commands
+
+"Nuke" command to stop and remove all containers, images, volumes, and build cache:
+```powershell
+docker stop $(docker ps -aq) 2>$null; docker system prune -a --volumes -f; docker builder prune -a -f
 ```
 
 ## 🛠️ Architecture
@@ -83,12 +90,63 @@ Limits:
 Reservations:
 They are all set to half of the limits to ensure that the services have enough resources to run properly.
 
-### Healthchecks
+### Healthchecks, restarts and lifecycle management
+
+#### Healthchecks
 
 An healthcheck is performed on both backend services.
-The healthcheck's port is hardcoded since `PORT` is not available at build time.
-Docker healthchecks are static by design.
-Environment substitution does not happen here.
+
+On the very first version, we used to do:
+```dockerfile
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+```
+
+But the port was hardcoded since `PORT` is not available at build time, making it unusable for other services, and kinda ugly.
+I upgraded it to use a Node.js one-liner that reads the `PORT` environment variable:
+```dockerfile
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 --start-period=15s \
+    CMD node -e "require('http').get({host:'127.0.0.1', port: process.env.PORT, path:'/health', timeout:2000}, r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+```
+
+#### Restart policies for backend services
+
+Here is a table summarizing different failure scenarios, their observed results, and the mechanisms that enable these behaviors:
+
+| Issue / Event                      | Solution                                                             | Mechanism                        | Related Snippet                    |
+| ---------------------------------- | -------------------------------------------------------------------- | -------------------------------- | ---------------------------------- |
+| RAM Limit Exceeded                 | Process killed (OOM) => Restart                                      | `deploy.resources.limits.memory` | `process.memoryUsage().rss`        |
+| Application Freeze                 | Container marked `unhealthy`                                         | Docker HEALTHCHECK               | `HEALTHCHECK CMD node -e \"...\"`  |
+| Memery usage above the `950` limit | An internal whatchdog will make the app exit, container will restart | setInterval whatchdog            | `setInterval(() => { ... }, 5000)` |
+| Application Crash                  | Container restarts automatically                                     | `restart: unless-stopped`        | `throw new Error('boom')`          |
+| Dependency unavailable at boot     | Wait before healthcheck + retry                                      | `start_period`                   | `--start-period=15s`               |
+| CPU Throttling                     | Slow performance, no crash                                           | Docker CPU limit                 | `cpus: '0.1'`                      |
+| Docker stop                        | Graceful shutdown                                                    | SIGTERM handling                 | `process.on('SIGTERM', shutdown)`  |
+| Docker compose down                | No restart                                                           | Manual/Intentional stop          | `docker compose down`              |
+
+#### Restart policies for frontend
+
+No healthcheck is implemented since Vue.js frontend.
+This is ententionnal since the frontend is mostly static files served to the client.
+
+The restart policy is set to `unless-stopped` to ensure the service restarts automatically in case of crashes, but not when intentionally stopped.  
+
+### Volumes
+
+No volumes are used in this architecture since there is no database or persistent storage needed for the services.
+
+But this could easily be added in the future with:
+```yaml
+services:
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
 
 ## ⚡ Services
 
