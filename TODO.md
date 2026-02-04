@@ -1,4 +1,4 @@
-- [ ] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
+- [x] Compose/Swarm: orchestration des images, ordre de démarrage, connexion (network), backup (sauvegarde des volumes)
 - [ ] Ajouter nginx ou trefik en reverse proxy ?
 - [x] Image docker expliqué: bonus FROM image
 - [x] Tools (hypervision, supervision): grafana, ...
@@ -15,12 +15,14 @@
 - [x] Minimum 3 images docker (backend, bdd, frontend)
 - [x] 0 images depuis docker hub. Toutes vos images doivent avoir de la personnalisation.
 - [x] Vous devez produire au moins 3 types d'images, 1 pour du front, 1 pour du back et 1 "serveur web" (dans mon exemple ça sera un serveur de jeux).
+- [x] Au run (et dans le compose), tous vos containers doivent recevoir des arguments afin de  customiser les ressources allouées. 
 - [ ] Faire backup ? Cf premier point
-- [ ] Au run (et dans le compose), tous vos containers doivent recevoir des arguments afin de  customiser les ressources allouées. 
+- [ ] Temps d'arrets
 - [ ] Faire schema architecture
 - [ ] une documentation pour expliquer vos choix
     - [ ] Expliquer les choix - au build - sur vos images (quelles dépendances, quels ports ouverts...) 
     - [ ] Expliquer les argument nécessaires au run (ils se retrouveront dans votre docker compose) 
     - [ ] Toute installation de librairie, opération sur l'OS doit être expliquée
 - [ ] Checkup avec parties "critères" de la consigne
+- [ ] .env
 - [ ] Suppr ce fichier

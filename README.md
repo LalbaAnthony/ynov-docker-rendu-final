@@ -67,7 +67,7 @@ The frontend service is mapped to port `80` externally to be accessible without 
 
 | Name           | Base Image      | Description                                                                         | Why ?                                                                                                                          |
 | -------------- | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| custom-node:22 | debian:12-slim  | Reusable base for all Node.js image with common dependencies to reduce duplication. | Used debian since its lightweight.                                                                                             |
+| custom-node:22 | debian:12-slim  | Reusable base for all Node.js image with common dependencies to reduce duplication. | Used debian since its lightweight. I prefer debian over alpine for better compatibility with native modules.                   |
 | service-a      | custom-node:22  | Backend service A                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                         |
 | service-b      | custom-node:22  | Backend service B                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                         |
 | service-c      | custom-node:22  | Frontend service C                                                                  | Reusage of custom Node.js image to ensure consistency.                                                                         |
@@ -146,11 +146,16 @@ const shutdown = async (signal) => {
     setTimeout(() => process.exit(1), 10000)
 }
 
+// We handle more signals than juste the docker `STOPSIGNAL SIGTERM`, just in case this code is run outside docker
 process.on('SIGTERM', shutdown)
 process.on('SIGINT', shutdown)
 ```
 
 This ensures that the application can clean up resources and finish ongoing requests before exiting.
+
+On both backend services, the service will log the received signal and shut down gracefully within `10 seconds`.
+
+`STOPSIGNAL` is explicitly set to `SIGTERM` in the Dockerfile to ensure consistency.
 
 #### Restart policies for backend services
 
@@ -160,7 +165,7 @@ Here is a table summarizing different failure scenarios, their observed results,
 | ---------------------------------- | -------------------------------------------------------------------- | -------------------------------- | ---------------------------------- |
 | RAM Limit Exceeded                 | Process killed (OOM) => Restart                                      | `deploy.resources.limits.memory` | `process.memoryUsage().rss`        |
 | Application Freeze                 | Container marked `unhealthy`                                         | Docker HEALTHCHECK               | `HEALTHCHECK CMD node -e \"...\"`  |
-| Memery usage above the `950` limit | An internal whatchdog will make the app exit, container will restart | setInterval whatchdog            | `setInterval(() => { ... }, 5000)` |
+| Memery usage above the `128` limit | An internal whatchdog will make the app exit, container will restart | setInterval whatchdog            | `setInterval(() => { ... }, 5000)` |
 | Application Crash                  | Container restarts automatically                                     | `restart: unless-stopped`        | `throw new Error('boom')`          |
 | Dependency unavailable at boot     | Wait before healthcheck + retry                                      | `start_period`                   | `--start-period=15s`               |
 | CPU Throttling                     | Slow performance, no crash                                           | Docker CPU limit                 | `cpus: '0.1'`                      |

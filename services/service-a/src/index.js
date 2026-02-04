@@ -6,6 +6,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+const MEMORY_LIMIT = process.env.MEMORY_LIMIT || 128;
 
 app.use(cors());
 
@@ -23,6 +24,7 @@ app.get('/health', async (req, res) => {
         status: 'ok',
         uptime: process.uptime(),
         memory: process.memoryUsage().rss,
+        memory_limit: MEMORY_LIMIT * 1024 * 1024
     })
 })
 
@@ -41,7 +43,7 @@ app.listen(PORT, () => {
 // Watchdog interne
 setInterval(() => {
     const mem = process.memoryUsage().rss / 1024 / 1024
-    if (mem > 950) {
+    if (mem > MEMORY_LIMIT) {
         console.error('Memory limit reached, exiting')
         process.exit(1)
     }
@@ -59,6 +61,7 @@ const shutdown = async (signal) => {
     setTimeout(() => process.exit(1), 10000)
 }
 
+// We handle more signals than juste the docker `STOPSIGNAL SIGTERM`, just in case this code is run outside docker
 process.on('SIGTERM', shutdown)
 process.on('SIGINT', shutdown)
 
