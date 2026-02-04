@@ -110,6 +110,23 @@ CONTAINER ID   NAME        CPU %     MEM USAGE / LIMIT   MEM %     NET I/O      
 ebfb8086f77a   service-e   0.00%     44.7MiB / 64MiB     69.85%    1.39kB / 0B       0B / 0B     21
 ```
 
+### Stop gracefully
+
+| Service   | Time |
+| --------- | ---- |
+| service-a | 15s  |
+| service-b | 15s  |
+| service-c | 5s   |
+| service-d | 10s  |
+| service-e | 10s  |
+
+This is achieved by handling `SIGTERM` and `SIGINT` signals in the application code to allow for graceful shutdowns.
+
+By modifiying `stop_grace_period` to those custom values, we avoid:
+- Traefik showing `502 Bad Gateway` errors when backend services take longer to shutdown.
+- Vue.js frontend showing `504 Gateway Timeout` errors when stopping the service.
+- Netdata losing data when stopping the service too quickly and reporting incomplete metrics.
+
 ### Healthchecks, restarts and lifecycle management
 
 #### Healthchecks

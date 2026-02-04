@@ -5,6 +5,7 @@ services:
     env_file:
       - ./services/service-a/.env
     restart: unless-stopped
+    stop_grace_period: 15s
     labels:
       - traefik.enable=true
       - traefik.http.routers.service-a.rule=PathPrefix(`/api/a`)
@@ -27,6 +28,7 @@ services:
     env_file:
       - ./services/service-b/.env
     restart: unless-stopped
+    stop_grace_period: 15s
     labels:
       - traefik.enable=true
       - traefik.http.routers.service-b.rule=PathPrefix(`/api/b`)
@@ -54,6 +56,7 @@ services:
       service-b:
         condition: service_healthy
     restart: unless-stopped
+    stop_grace_period: 5s
     labels:
       - traefik.enable=true
       - traefik.http.routers.frontend.rule=PathPrefix(`/`)
@@ -82,6 +85,7 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     restart: unless-stopped
+    stop_grace_period: 10s
     labels:
       - traefik.enable=true
       - traefik.http.routers.netdata.rule=PathPrefix(`/netdata`)
@@ -105,6 +109,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
+    stop_grace_period: 10s
     deploy:
       resources:
         limits:
