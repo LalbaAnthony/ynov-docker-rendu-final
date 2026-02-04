@@ -3,7 +3,7 @@
 All `.env.example` files contain real working example values, so you can use them as-is for local development. In a production environment, we would recommend changing sensitive values such as API keys, passwords, and secrets.
 
 ```sh
-# ! FOR EACH SERVICE LIKE `service-*`: Copy the example environment file
+# ! FOR EACH SERVICE LIKE `service-*`: Copy the example environment file is needed
 cd services/<SERVICE_NAME>
 cp .env.example .env
 
@@ -18,7 +18,7 @@ docker compose down ; docker compose up
 
 # Rebuild one service if needed
 docker compose down
-docker compose build --no-cache service-a
+docker compose build --no-cache service-c
 docker compose up
 ```
 
@@ -51,12 +51,13 @@ docker stop $(docker ps -aq) 2>$null; docker system prune -a --volumes -f; docke
 
 ### Ports binding
 
-| Name      | Type       | Port externe | Port interne | Techno  | URL                          |
-| --------- | ---------- | ------------ | ------------ | ------- | ---------------------------- |
-| Service A | Backend    | `3001`       | `3001`       | Express | http://localhost:3001/api/a/ |
-| Service B | Backend    | `3002`       | `3002`       | Express | http://localhost:3002/api/b/ |
-| Service C | Frontend   | `80`         | `5173`       | Vue.js  | http://localhost/            |
-| Service D | Monitoring | `19999`      | `19999`      | Netdata | http://localhost:19999/      |
+| Name      | Type       | Port externe | Port interne | Techno  | URL                                       |
+| --------- | ---------- | ------------ | ------------ | ------- | ----------------------------------------- |
+| Service A | Backend    | /            | `3001`       | Express | http://localhost/api/a/                   |
+| Service B | Backend    | /            | `3002`       | Express | http://localhost/api/b/                   |
+| Service C | Frontend   | /            | `5173`       | Vue.js  | http://localhost/                         |
+| Service D | Monitoring | /            | `19999`      | Netdata | http://localhost/netdata                  |
+| Service E | Reverse PX | `80`, `8080` | `80`         | Traefik | http://localhost/, http://localhost:8080/ |
 
 Most externals and internals ports are the same to reduce confusion.
 
@@ -64,13 +65,14 @@ The frontend service is mapped to port `80` externally to be accessible without 
 
 ### Images
 
-| Name           | Base Image      | Description                                                                         | Why ?                                                                                                                    |
-| -------------- | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| custom-node:22 | debian:12-slim  | Reusable base for all Node.js image with common dependencies to reduce duplication. | Used debian since its lightweight.                                                                                       |
-| service-a      | custom-node:22  | Backend service A                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                   |
-| service-b      | custom-node:22  | Backend service B                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                   |
-| service-c      | custom-node:22  | Frontend service C                                                                  | Reusage of custom Node.js image to ensure consistency.                                                                   |
-| service-d      | netdata/netdata | Monitoring service with Netdata                                                     | Netdata is a lightweight monitoring tool that provides real-time insights into system performance and container metrics. |
+| Name           | Base Image      | Description                                                                         | Why ?                                                                                                                          |
+| -------------- | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| custom-node:22 | debian:12-slim  | Reusable base for all Node.js image with common dependencies to reduce duplication. | Used debian since its lightweight.                                                                                             |
+| service-a      | custom-node:22  | Backend service A                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                         |
+| service-b      | custom-node:22  | Backend service B                                                                   | Reusage of custom Node.js image to ensure consistency.                                                                         |
+| service-c      | custom-node:22  | Frontend service C                                                                  | Reusage of custom Node.js image to ensure consistency.                                                                         |
+| service-d      | netdata/netdata | Monitoring service with Netdata                                                     | Netdata is a lightweight monitoring tool that provides real-time insights into system performance and container metrics.       |
+| service-e      | traefik:v3.0    | Reverse proxy service with Traefik                                                  | Traefik is a modern reverse proxy and load balancer that integrates well with Docker and provides automatic service discovery. |
 
 ### Custom Node.js image
 
@@ -82,17 +84,31 @@ It also sets up a non-root `nodeuser` user to enhance security.
 
 ### RAM and CPUs limitations
 
+Those limitations aims to maintain a small CPU usage arround 1 CPU core.
+On a production server, we would adapt those values based on the server capacity and expected load.
+
 | Service   | RAM (Limite) | CPU (Limite) | RAM (Réservation) | CPU (Réservation) | Reasoning                                                                                                  |
 | --------- | ------------ | ------------ | ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------- |
 | service-a | 128Mo        | 0.2          | 64Mo              | 0.2               | Node.js backend services are generally lightweight and do not require a lot of resources (30-50 Mo empty). |
 | service-b | 128Mo        | 0.2          | 64Mo              | 0.2               | Node.js backend services are generally lightweight and do not require a lot of resources (30-50 Mo empty). |
-| service-c | 32Mo         | 0.1          | 32Mo              | 0.1               | Vue.js frontend service is mostly static files, so it has a very low resource usage.                       |
+| service-c | 256M         | 0.2          | 128Mo             | 0.1               | Vue.js frontend service is mostly static files, so it has a very low resource usage.                       |
 | service-d | 256Mo        | 0.3          | 128Mo             | 0.2               | Netdata is lightweight but can use more resources when monitoring multiple containers.                     |
+| service-e | 64Mo         | 0.2          | 32Mo              | 0.1               | Traefik is efficient and does not require many resources for basic reverse proxying.                       |
 
 Limits are set based on typical usage patterns for Node.js applications and the specific needs of each service.
 In practice, Node.js applications often use around `30-50 Mo` of RAM when idle, so the limits are set to provide enough headroom for normal operation while preventing excessive resource consumption.
 
 Reservations are typicaly set to half of the limits to ensure that the services have enough resources to run properly.
+
+Here is a sample output of `docker stats` showing the resource usage of each service:
+```
+CONTAINER ID   NAME        CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O   PIDS
+13f852fdd68a   service-a   0.00%     30.85MiB / 128MiB   24.10%    1.39kB / 0B       0B / 0B     7
+8115ce551bec   service-b   0.00%     32.52MiB / 128MiB   25.40%    1.39kB / 0B       0B / 0B     7
+025e03efc339   service-c   0.11%     97.49MiB / 256MiB   38.08%    746B / 0B         0B / 0B     43
+158e7593b631   service-d   1.57%     91.78MiB / 256MiB   35.85%    7.98kB / 6.18kB   0B / 0B     102
+ebfb8086f77a   service-e   0.00%     44.7MiB / 64MiB     69.85%    1.39kB / 0B       0B / 0B     21
+```
 
 ### Healthchecks, restarts and lifecycle management
 

@@ -12,6 +12,7 @@ app.use(cors());
 app.get("/", (req, res) => {
     res.json({
         service: "service-b",
+        message: "Welcome to Service B",
         status: "ok"
     });
 });

@@ -14,4 +14,4 @@ STOPSIGNAL SIGTERM
 
 EXPOSE ${PORT}
 
-CMD ["node", "src/index.js"]
+ENTRYPOINT ["node", "src/index.js"]

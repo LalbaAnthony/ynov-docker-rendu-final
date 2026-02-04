@@ -4,9 +4,14 @@ services:
     build: ./services/service-a
     env_file:
       - ./services/service-a/.env
-    ports:
-      - "3001:3001"
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.service-a.rule=PathPrefix(`/api/a`)
+      - traefik.http.routers.service-a.entrypoints=web
+      - traefik.http.routers.service-a.middlewares=service-a-strip
+      - traefik.http.middlewares.service-a-strip.stripprefix.prefixes=/api/a
+      - traefik.http.services.service-a.loadbalancer.server.port=3001
     deploy:
       resources:
         limits:
@@ -21,9 +26,14 @@ services:
     build: ./services/service-b
     env_file:
       - ./services/service-b/.env
-    ports:
-      - "3002:3002"
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.service-b.rule=PathPrefix(`/api/b`)
+      - traefik.http.routers.service-b.entrypoints=web
+      - traefik.http.routers.service-b.middlewares=service-b-strip
+      - traefik.http.middlewares.service-b-strip.stripprefix.prefixes=/api/b
+      - traefik.http.services.service-b.loadbalancer.server.port=3002
     deploy:
       resources:
         limits:
@@ -38,28 +48,29 @@ services:
     build: ./services/service-c
     env_file:
       - ./services/service-c/.env
-    ports:
-      - "80:5173"
     depends_on:
       service-a:
         condition: service_healthy
       service-b:
         condition: service_healthy
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.services.frontend.loadbalancer.server.port=5173
     deploy:
       resources:
         limits:
-          cpus: "0.1"
-          memory: 32M
+          cpus: "0.2"
+          memory: 256M
         reservations:
           cpus: "0.1"
-          memory: 32M
+          memory: 128M
 
   service-d:
     container_name: service-d
     build: ./services/service-d
-    ports:
-      - "19999:19999"
     cap_add:
       - SYS_PTRACE
     security_opt:
@@ -71,6 +82,11 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.netdata.rule=PathPrefix(`/netdata`)
+      - traefik.http.routers.netdata.entrypoints=web
+      - traefik.http.services.netdata.loadbalancer.server.port=19999
     deploy:
       resources:
         limits:
@@ -79,3 +95,21 @@ services:
         reservations:
           cpus: "0.2"
           memory: 128M
+
+  service-e:
+    container_name: service-e
+    build: ./services/service-e
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 64M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
