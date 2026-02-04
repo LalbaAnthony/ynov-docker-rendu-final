@@ -208,6 +208,8 @@ This service is a frontend application built with Vue.js.
 It serves as the main entry point for users.
 It fetches data from Service A and Service B and displays it to the user.
 
+The service C docker-compose has a `depends_on` property to ensure that it starts only after Service A and Service B are up and running.
+
 It serves 1 page:
 - `GET /`: Fetches data from Service A and Service B and displays it.
 
@@ -216,6 +218,7 @@ It serves 1 page:
 This service is responsible for monitoring the other services in real-time using Netdata.
 
 In docker compose, a netdata service is added to monitor all containers in real-time.
+There is no `depends_on` since netdata should start independently of other services.
 
 All `container_name` are set to have more readable names in netdata dashboard.
 The Netdata configuration is registered in `services/service-d/netdata.conf`. It used on the custom netdata image build in `services/service-d/Dockerfile`.
